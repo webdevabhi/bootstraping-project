@@ -1,12 +1,15 @@
 // Uncomment this line to use CSS modules
 // import styles from './app.module.scss';
-import NxWelcome from './nx-welcome';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
 
 export function App() {
   return (
-    <div>
-      <NxWelcome title="react" />
-    </div>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      {/* Add your other routes here */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 }
 
