@@ -54,6 +54,15 @@
         }
       }
     },
+    "new-migration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dbmate -d=apps/service/db/migrations new"
+        ],
+        "parallel": false
+      }
+    },
     "test": {
       "options": {
         "passWithNoTests": true
