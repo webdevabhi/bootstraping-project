@@ -1,33 +1,29 @@
 import express from 'express';
 import { postgraphile } from 'postgraphile';
+import cors from 'cors';
 
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+import authMiddleware from './middlewares/authMiddleware';
+import authRoutes from './routes/authRoutes';
+import config from './config';
 
 const app = express();
 
-// PostgreSQL connection configuration
-const DATABASE_URL = process.env.DATABASE_URL || 'postgres://admin:admin@localhost:5432/bootstrap-project';
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Auth routes
+app.use('/auth', authRoutes);
+
+// Apply auth middleware before postgraphile
+app.use(authMiddleware);
 
 // Postgraphile middleware configuration
 app.use(
   postgraphile(
-    DATABASE_URL,
-    'public', // PostgreSQL schema to expose
-    {
-      watchPg: true, // Auto-update schema when database changes
-      graphiql: true, // Enable GraphiQL interface
-      enhanceGraphiql: true, // Add extra GraphiQL features
-      retryOnInitFail: true, // Retry connection on failure
-      dynamicJson: true, // Return JSON scalars as raw JSON
-      setofFunctionsContainNulls: false, // Assume set-returning functions don't return nulls
-      ignoreRBAC: false, // Respect PostgreSQL's role-based access control
-      extendedErrors: ['hint', 'detail', 'errcode'], // Extended error information
-      appendPlugins: [], // Add any additional plugins here
-      graphileBuildOptions: {
-        // Any build-time options
-      },
-    }
+    config.databaseUrl,
+    'app_public',
+    config.postgraphileOptions
   )
 );
 
@@ -35,7 +31,7 @@ app.get('/', (req, res) => {
   res.send({ message: 'Hello API' });
 });
 
-app.listen(port, host, () => {
-  console.log(`[ ready ] http://${host}:${port}`);
-  console.log(`GraphiQL interface available at: http://${host}:${port}/graphiql`);
+app.listen(Number(config.port), config.host, () => {
+  console.log(`[ ready ] http://${config.host}:${config.port}`);
+  console.log(`GraphiQL interface available at: http://${config.host}:${config.port}/graphiql`);
 });

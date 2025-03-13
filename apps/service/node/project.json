@@ -63,6 +63,22 @@
         "parallel": false
       }
     },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dbmate -d=apps/service/db/migrations up"
+        ]
+      }
+    },
+    "rollback": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dbmate -d=apps/service/db/migrations down"
+        ]
+      }
+    },
     "test": {
       "options": {
         "passWithNoTests": true
