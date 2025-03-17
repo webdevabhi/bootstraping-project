@@ -1,28 +1,35 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { Pool } from 'pg';
+import { Pool, DatabaseError } from 'pg';
 
 import config from '../config';
 
 const JWT_SECRET = config.jwtSecret;
-const pool = new Pool({
+export const defaultPool = new Pool({
   connectionString: config.databaseUrl,
 });
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response, dbPool: Pool = defaultPool) => {
   const { email, password, role = 'app_client', name } = req.body;
 
-  // Validate inputs
-  if (!email || !password) {
-    throw new Error('Email and password are required');
-  }
-
-  if (!['app_admin', 'app_client'].includes(role)) {
-    throw new Error('Invalid role specified');
-  }
-
   try {
-    const result = await pool.query(
+    // Validate inputs
+    const missingFields = [];
+    if (!email) missingFields.push('email');
+    if (!password) missingFields.push('password');
+    if (!name) missingFields.push('name');
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({ 
+        error: `Missing required fields: ${missingFields.join(', ')}` 
+      });
+    }
+
+    if (!['app_admin', 'app_client'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role specified' });
+    }
+
+    const result = await dbPool.query(
       `INSERT INTO app_public.users (email, password_hash, role, name)
          VALUES ($1, app_private.hash_password($2), $3, $4)
          RETURNING id, email, role, created_at`,
@@ -44,16 +51,20 @@ export const register = async (req: Request, res: Response) => {
       token,
       user: { id: user.id, email: user.email, role: user.role },
     });
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
+  } catch (error: unknown) {
+    if (error instanceof DatabaseError) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(400).json({ error: 'An unexpected error occurred' });
+    }
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, dbPool: Pool = defaultPool) => {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query(
+    const result = await dbPool.query(
       'SELECT * FROM app_private.verify_password($1, $2)',
       [email, password]
     );
@@ -78,7 +89,11 @@ export const login = async (req: Request, res: Response) => {
       token,
       user: { id: user.id, email: user.email, role: user.role },
     });
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
+  } catch (error: unknown) {
+    if (error instanceof DatabaseError) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(400).json({ error: 'An unexpected error occurred' });
+    }
   }
 };
