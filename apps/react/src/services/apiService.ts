@@ -107,9 +107,9 @@ class ApiService {
 }
 
 // Create and export instance
+export { ApiService };
 export const apiService = new ApiService({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api',
   graphqlEndpoint: import.meta.env.VITE_GRAPHQL_ENDPOINT ?? 'http://localhost:3000/graphql',
 });
-
 export default apiService;
