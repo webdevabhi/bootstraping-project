@@ -25,6 +25,7 @@ function Login() {
             <div className="flex flex-column gap-2">
               <label htmlFor="email" className="text-700">Email address</label>
               <InputText
+                data-testid='email'
                 id="email"
                 type="email"
                 value={email}
@@ -37,6 +38,7 @@ function Login() {
               <label htmlFor="password" className="text-700">Password</label>
               <span className="p-input-icon-right w-full">
                 <InputText
+                  data-testid='password'
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}

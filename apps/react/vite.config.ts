@@ -39,5 +39,6 @@ export default defineConfig(() => ({
       reportsDirectory: '../../coverage/apps/react',
       provider: 'v8' as const,
     },
+    css: false
   },
 }));

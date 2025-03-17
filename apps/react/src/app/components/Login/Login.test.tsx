@@ -20,8 +20,8 @@ describe('Login Component', () => {
     expect(screen.getByRole('heading', { name: /sign in to your account/i })).toBeInTheDocument();
     
     // Check for input fields
-    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByTestId('email')).toBeInTheDocument();
+    expect(screen.getByTestId('password')).toBeInTheDocument();
     
     // Check for submit button
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
@@ -34,8 +34,8 @@ describe('Login Component', () => {
   test('allows entering email and password', () => {
     renderLogin();
     
-    const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/password/i);
+    const emailInput = screen.getByTestId('email');
+    const passwordInput = screen.getByTestId('password');
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
