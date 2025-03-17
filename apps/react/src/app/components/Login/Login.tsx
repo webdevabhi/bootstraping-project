@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import './Login.scss';
 import { Link } from 'react-router-dom';
+import apiService from '../../../services/apiService';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log('Login attempt with:', email, password);
+    
+    const response = await apiService.post('/auth/login', { email, password });
+    console.log('Login successful:', response);
   };
 
   return (
@@ -29,13 +32,22 @@ function Login() {
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="password-input-container">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="show-password-button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
           <button type="submit">Sign in</button>
           <div className="login-link">

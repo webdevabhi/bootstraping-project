@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Register.scss';
+import apiService from '../../../services/apiService';
 
 function Register() {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -18,10 +22,12 @@ function Register() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Add your registration logic here
     console.log('Registration attempt with:', formData);
+    const response = await apiService.post('/auth/register', { ...formData, role: 'app_client' });
+    console.log('Registration successful:', response);
   };
 
   return (
@@ -30,13 +36,13 @@ function Register() {
         <h2>Create your account</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="fullName">Full Name</label>
+            <label htmlFor="name">Full Name</label>
             <input
-              id="fullName"
-              name="fullName"
+              id="name"
+              name="name"
               type="text"
               required
-              value={formData.fullName}
+              value={formData.name}
               onChange={handleChange}
             />
           </div>
@@ -53,25 +59,43 @@ function Register() {
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-            />
+            <div className="password-input-container">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="show-password-button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
+            <div className="password-input-container">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="show-password-button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
           <button type="submit">Create Account</button>
           <div className="login-link">

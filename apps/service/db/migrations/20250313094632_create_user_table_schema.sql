@@ -2,6 +2,7 @@
 -- Create the users table in app_public schema
 CREATE TABLE app_public.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(50) NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'app_client',

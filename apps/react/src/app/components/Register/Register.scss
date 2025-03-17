@@ -89,4 +89,55 @@
       }
     }
   }
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  input {
+    flex: 1;
+    padding-right: 70px !important;
+  }
+
+  .show-password-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #666;
+    font-size: 14px;
+    width: auto !important;
+    min-width: fit-content;
+    max-width: fit-content;
+    
+    &:hover {
+      color: #333;
+    }
+
+    &:focus {
+      box-shadow: none;
+      background: none;
+    }
+
+    // Override general button styles
+    &.show-password-button {
+      width: auto !important;
+      background: none !important;
+      color: #666 !important;
+      padding: 5px 10px !important;
+      position: absolute !important;
+      margin: 0 !important;
+
+      &:hover {
+        color: #333 !important;
+        background: none !important;
+      }
+    }
+  }
 } 

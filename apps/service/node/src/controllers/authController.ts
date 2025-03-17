@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password, role = 'app_client' } = req.body;
+  const { email, password, role = 'app_client', name } = req.body;
 
   // Validate inputs
   if (!email || !password) {
@@ -23,10 +23,10 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO app_public.users (email, password_hash, role)
-         VALUES ($1, app_private.hash_password($2), $3)
+      `INSERT INTO app_public.users (email, password_hash, role, name)
+         VALUES ($1, app_private.hash_password($2), $3, $4)
          RETURNING id, email, role, created_at`,
-      [email, password, role]
+      [email, password, role, name]
     );
 
     const user = result.rows[0];
@@ -59,7 +59,8 @@ export const login = async (req: Request, res: Response) => {
     );
 
     const user = result.rows[0];
-    if (!user) {
+    
+    if (!user?.id) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 

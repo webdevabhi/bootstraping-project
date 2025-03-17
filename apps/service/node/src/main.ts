@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Auth routes
-app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
 // Apply auth middleware before postgraphile
 app.use(authMiddleware);
